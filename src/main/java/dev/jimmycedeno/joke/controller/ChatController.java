@@ -1,4 +1,4 @@
-package dev.jimmycedeno.joke;
+package dev.jimmycedeno.joke.controller;
 
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.web.bind.annotation.GetMapping;
