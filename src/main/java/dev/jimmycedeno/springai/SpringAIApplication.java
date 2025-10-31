@@ -1,13 +1,13 @@
-package dev.jimmycedeno.joke;
+package dev.jimmycedeno.springai;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class JokeApplication {
+public class SpringAIApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(JokeApplication.class, args);
+		SpringApplication.run(SpringAIApplication.class, args);
 	}
 
 }
