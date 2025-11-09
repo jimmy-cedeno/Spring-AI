@@ -1,9 +1,7 @@
-package dev.jimmycedeno.springai.controller;
+package dev.jimmycedeno.springai.controller.ragPgVector;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -20,7 +18,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 public class RagController {
-  private final ChatModel chatModel;
+  private final ChatClient chatClient;
   private final VectorStore vectorStore;
 
   @Value("classpath:/prompts/rag.st")
@@ -31,14 +29,17 @@ public class RagController {
     List<Document> similarDocuments = vectorStore.similaritySearch(SearchRequest.builder().query(message).topK(2).build());
     List<String> contentList = similarDocuments.stream().map(Document::getText).toList();
 
-    PromptTemplate promptTemplate = new PromptTemplate(ragPromptTemplate);
     Map<String, Object> promptParams = new HashMap<>();
     promptParams.put("input", message);
     promptParams.put("documents", String.join("\n", contentList));
-    Prompt prompt = promptTemplate.create(promptParams);
 
-    return chatModel.call(prompt).getResult().getOutput().getText();
+    return chatClient
+        .prompt()
+        .system(s -> s.text(ragPromptTemplate).params(promptParams))
+        .user(message)
+        .call().content();
 
   }
+
 
 }

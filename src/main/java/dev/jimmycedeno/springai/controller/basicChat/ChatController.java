@@ -1,24 +1,20 @@
-package dev.jimmycedeno.springai.controller;
+package dev.jimmycedeno.springai.controller.basicChat;
 
-import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.ai.openai.OpenAiChatModel;
+import lombok.AllArgsConstructor;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-//@AllArgsConstructor
+@AllArgsConstructor
 public class ChatController {
 
-  private final ChatModel chatModel;
-
-  public ChatController(OpenAiChatModel chatModel) {
-    this.chatModel = chatModel;
-  }
+  private final ChatClient chatClient;
 
   @GetMapping("/joke")
   String generate(@RequestParam(value = "message", defaultValue = "Dime un chiste") String message) {
-    return chatModel.call(message);
+    return chatClient.prompt().user(message).call().content();
   }
 }
