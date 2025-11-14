@@ -3,6 +3,7 @@ package dev.jimmycedeno.springai.controller.functions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -17,13 +18,11 @@ public class WeatherService {
     restClient = RestClient.create(weatherProps.apiUrl());
   }
 
-
-
   @Tool(description = "Obtener el clima actual para la ciudad dada")
-  public Response apply(Request request) {
-    log.info("Weather Request: {}", request);
+  public Response apply(@ToolParam(description = "Nombre de la ciudad") String city) {
+    log.info("Weather Request: {}", city);
     Response response = restClient.get()
-        .uri("/current.json?key={key}&q={q}", weatherProps.apiKey(), request.city)
+        .uri("/current.json?key={key}&q={q}", weatherProps.apiKey(), city)
         .retrieve()
         .body(Response.class);
     log.info("Weather Response: {}", response);

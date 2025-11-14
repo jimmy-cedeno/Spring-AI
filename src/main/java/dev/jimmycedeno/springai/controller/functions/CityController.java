@@ -10,18 +10,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CityController {
   private final ChatClient chatClient;
+  private final WeatherService weatherService;
   private final WeatherConfigProperties weatherConfigProperties;
 
   @GetMapping("/cities")
   public String cities(@RequestParam("message") String message) {
-//    SystemMessage systemMessage = new SystemMessage("Eres un asistente util que responde preguntas sobre ciudades de todo el mundo");
-//    UserMessage userMessage = new UserMessage(message);
 
     return chatClient
         .prompt()
-        .system("Eres un asistente util que responde preguntas sobre ciudades de todo el mundo")
+        .system("Eres un asistente util que responde preguntas sobre ciudades de todo el mundo, si te preguntan el clima de una ciudad limitate a responder su temperatura actual.")
         .user(message)
-        .tools(new WeatherService(weatherConfigProperties))
+        .tools(weatherService)
         .call().content();
   }
 }
