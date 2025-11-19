@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SimplePromptsController {
   private final ChatClient chatClient;
 
-  @GetMapping("")
+  @GetMapping("/simple")
   String simple() {
     return chatClient.prompt(new Prompt.Builder().content("dime un chiste").build()).call().content();
   }
