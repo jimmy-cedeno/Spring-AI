@@ -1,0 +1,73 @@
+```mermaid
+---
+title: Listar premios, canjear premio, sumar puntos
+config:
+  curve: natural
+---
+flowchart LR
+
+  %% =========================
+  %% KAFKA TOPICS
+  %% =========================
+  topic_point_reward@{ img: "https://cloud-icons.onemodel.app/aws/Architecture-Service-Icons_01312023/Arch_Analytics/Arch_64/Arch_Amazon-Managed-Streaming-for-Apache-Kafka_64.svg", label: "point.rewards.event.json.in", h: 60, constraint: "on" }
+
+  topic_point_reward_command@{ img: "https://cloud-icons.onemodel.app/aws/Architecture-Service-Icons_01312023/Arch_Analytics/Arch_64/Arch_Amazon-Managed-Streaming-for-Apache-Kafka_64.svg", label: "point.rewards.command.json.in", h: 60, constraint: "on" }
+
+  kafka_promo-link@{ img: "https://cloud-icons.onemodel.app/aws/Architecture-Service-Icons_01312023/Arch_Analytics/Arch_64/Arch_Amazon-Managed-Streaming-for-Apache-Kafka_64.svg", label: "promo.link.mastercard.notification.json", h: 60, constraint: "on" }
+
+  %% =========================
+  %% BACKEND MICROSERVICES
+  %% =========================
+  pd-point-reward@{ img: "https://cloud-icons.onemodel.app/aws/Architecture-Service-Icons_01312023/Arch_Containers/64/Arch_Amazon-EKS-Cloud_64.svg", label: "pd-point-reward", h: 60, constraint: "on" }
+
+  cs-wallet-point-rewards@{ img: "https://cloud-icons.onemodel.app/aws/Architecture-Service-Icons_01312023/Arch_Containers/64/Arch_Amazon-EKS-Cloud_64.svg", label: "cs-wallet-point-rewards", h: 60, constraint: "on" }
+
+  ps-point-rewards@{ img: "https://cloud-icons.onemodel.app/aws/Architecture-Service-Icons_01312023/Arch_Containers/64/Arch_Amazon-EKS-Cloud_64.svg", label: "ps-point-rewards", h: 60, constraint: "on" }
+
+  bs-point-stack@{ img: "https://cloud-icons.onemodel.app/aws/Architecture-Service-Icons_01312023/Arch_Containers/64/Arch_Amazon-EKS-Cloud_64.svg", label: "bs-point-stack", h: 60, constraint: "on" }
+
+  bd-point-stack-history@{ img: "https://cloud-icons.onemodel.app/aws/Architecture-Service-Icons_01312023/Arch_Containers/64/Arch_Amazon-EKS-Cloud_64.svg", label: "bd-point-stack-history", h: 60, constraint: "on" }
+
+  bs-point-stack-history@{ img: "https://cloud-icons.onemodel.app/aws/Architecture-Service-Icons_01312023/Arch_Containers/64/Arch_Amazon-EKS-Cloud_64.svg", label: "bs-point-stack-history", h: 60, constraint: "on" }
+
+  bs-point-inventory@{ img: "https://cloud-icons.onemodel.app/aws/Architecture-Service-Icons_01312023/Arch_Containers/64/Arch_Amazon-EKS-Cloud_64.svg", label: "bs-point-inventory", h: 60, constraint: "on" }
+
+  ps-partner-processor-command@{ img: "https://cloud-icons.onemodel.app/aws/Architecture-Service-Icons_01312023/Arch_Containers/64/Arch_Amazon-EKS-Cloud_64.svg", label: "ps-partner-processor-command", h: 60, constraint: "on" }
+
+  bs-user-challenge@{ img: "https://cloud-icons.onemodel.app/aws/Architecture-Service-Icons_01312023/Arch_Containers/64/Arch_Amazon-EKS-Cloud_64.svg", label: "bs-user-challege", h: 60, constraint: "on" }
+
+  bs-engagement-profile@{ img: "https://cloud-icons.onemodel.app/aws/Architecture-Service-Icons_01312023/Arch_Containers/64/Arch_Amazon-EKS-Cloud_64.svg", label: "bs-engagement-profile", h: 60, constraint: "on" }
+
+  %% =========================
+  %% DATABASES
+  %% =========================
+  bd_PointInventory@{ img: "https://cloud-icons.onemodel.app/aws/Architecture-Service-Icons_01312023/Arch_Database/64/Arch_Amazon-DynamoDB_64.svg", label: "PointInventory", h: 60, constraint: "on" }
+
+  db_PointStackHistory@{ img: "https://cloud-icons.onemodel.app/aws/Architecture-Service-Icons_01312023/Arch_Database/64/Arch_Amazon-DynamoDB_64.svg", label: "PointStackHistory", h: 60, constraint: "on" }
+
+  db_PointStack@{ img: "https://cloud-icons.onemodel.app/aws/Architecture-Service-Icons_01312023/Arch_Database/64/Arch_Amazon-DynamoDB_64.svg", label: "PointStack", h: 60, constraint: "on" }
+
+  %% =========================
+  %% FLOWS
+  %% =========================
+  
+  subgraph Listar y canjear premio
+    cs-wallet-point-rewards --> ps-point-rewards
+    ps-point-rewards --> bs-user-challenge
+    ps-point-rewards --> bs-engagement-profile
+    ps-point-rewards --> ps-partner-processor-command
+    ps-point-rewards --> bs-point-inventory --> bd_PointInventory
+    ps-point-rewards --> bs-point-stack-history --> db_PointStackHistory
+    ps-point-rewards --> topic_point_reward_command --> bd-point-stack-history --> db_PointStackHistory
+    ps-point-rewards --> bs-point-stack --> db_PointStack
+    ps-point-rewards e1@==> kafka_promo-link
+    e1@{ animate: true }
+  end
+
+  subgraph sumar puntos
+    topic_point_reward --> pd-point-reward
+    pd-point-reward --> topic_point_reward_command & bs-point-stack
+  end
+
+  
+```
