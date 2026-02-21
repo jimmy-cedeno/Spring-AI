@@ -6,6 +6,7 @@ import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -19,12 +20,16 @@ public class SpringAIApplication {
 		SpringApplication.run(SpringAIApplication.class, args);
 	}
 
+//  @Bean
+//  public ChatClient chatClient(ChatClient.Builder builder){
+//    return builder
+////        .defaultSystem()
+//        .defaultAdvisors(MessageChatMemoryAdvisor.builder(MessageWindowChatMemory.builder().build()).build())
+//        .build();
+//  }
+
   @Bean
-  public ChatClient chatClient(ChatClient.Builder builder){
-    return builder
-//        .defaultSystem()
-//        .defaultAdvisors()
-        .defaultAdvisors(MessageChatMemoryAdvisor.builder(MessageWindowChatMemory.builder().build()).build())
-        .build();
+  public ChatClient chatClient(@Qualifier("openAiChatClient") ChatClient chatClient) {
+    return chatClient;
   }
 }
